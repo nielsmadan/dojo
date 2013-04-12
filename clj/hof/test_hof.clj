@@ -35,10 +35,13 @@
 (deftest test-my-and
 	(is (= (my-and false (/ 1 0)) false)))
 
-(deftest test-my-and=throws
+(deftest test-my-and-throws
 	(try 
 		(my-and true (/ 1 0))
 		(is false)
 	  (catch ArithmeticException e (is true))))
+
+(deftest test-my-and
+	(is (= (my-and false (/ 1 0)) false)))
 
 (run-all-tests #"clojure.test.hof")
