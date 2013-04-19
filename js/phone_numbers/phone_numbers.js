@@ -17,6 +17,18 @@ module.exports = {
 
     getEmptyPartitionedList: function () {
     	return _getEmptyPartitionedList();
+    },
+
+    isConsistentNumberListPartioned: function (validNumberList) {
+        return _isConsistentNumberListPartioned(validNumberList);
+    },
+
+    removeFirstDigit: function (partionedList){
+        return _removeFirstDigit(partionedList);
+    },
+
+    hasCommonPrefix: function (partionedList) {
+        return _hasCommonPrefix(partionedList);
     }
 }
 
@@ -31,9 +43,6 @@ function _startsWith(target, prefix) {
 function _getEmptyPartitionedList() {
 	return [[], [], [], [], [], [], [], [], [], []];
 }
-
-
-var numList = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 function _partitionList(list) {
 	var partionedList = _getEmptyPartitionedList();
@@ -68,3 +77,21 @@ function _isValidPhoneNumber(phoneNumber) {
 	}
 }
 
+// partition list
+// remove first character
+// if list contains one element = true
+// if list contains two elements and one is "" = false
+
+function _isConsistentNumberListPartioned(validNumberList) {
+    return true;
+}
+
+function _removeFirstDigit(partionedList){
+    return partionedList.map(function(element) { 
+        return element.substring(1); 
+    });    
+}
+
+function _hasCommonPrefix(partionedList) {
+    return partionedList.length > 1 && partionedList.indexOf("") !== -1;
+}

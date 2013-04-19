@@ -44,6 +44,13 @@ describe('isConsistentNumberList', function() {
     it('should return false when the argument is ["1", "2","12"]', function(){
       assert.equal(pn.isConsistentNumberList(["1", "2", "12"]), false);
     });
+    // it('should return false when the argument is every number from 10000 to 29999', function(){
+    //   var allNums = []
+    //   for (var i = 10000; i < 30000; ++i) {
+    //         allNums.push(i.toString());
+    //   }
+    //   assert.equal(pn.isConsistentNumberList(allNums), true);
+    // });
 });
 
 
@@ -57,4 +64,57 @@ describe('partitionList', function() {
 	it('should return [["1"], ["2"], ["3"]] when the argument is ["1", "2", "3"]', function(){
       assert.deepEqual(pn.partitionList(["1", "2", "3"]), [["1"], ["2"], ["3"]]);
     });
+  it('should return [["12", "13"], ["3"]] when the argument is ["12", "13", "3"]', function(){
+      assert.deepEqual(pn.partitionList(["12", "13", "3"]), [["12", "13"], ["3"]]);
+    });
+  it('', function(){
+      assert.deepEqual(pn.partitionList(["12", "13", "121","3"]),
+                                        [["12", "13", "121"], ["3"]]);
+    });
+});
+
+describe('removeFirstDigit', function() {
+  it('', function(){
+      assert.deepEqual(pn.removeFirstDigit([""]), [""]);
+    });
+  it('', function(){
+      assert.deepEqual(pn.removeFirstDigit(["1"]), [""]);
+    });
+  it('', function(){
+      assert.deepEqual(pn.removeFirstDigit(["12"]), ["2"]);
+    });
+  it('', function(){
+      assert.deepEqual(pn.removeFirstDigit(["123456"]), ["23456"]);
+    });
+  it('', function(){
+      assert.deepEqual(pn.removeFirstDigit(["12", "23"]), ["2", "3"]);
+    });
+  it('', function(){
+      assert.deepEqual(pn.removeFirstDigit(["12", "23456", "1"]), ["2", "3456", ""]);
+    });
+});
+
+describe('hasCommonPrefix', function() {
+  it('', function(){
+      assert.equal(pn.hasCommonPrefix(["1"]), false);
+    });
+  it('', function(){
+      assert.equal(pn.hasCommonPrefix(["1", "2"]), false);
+    });
+  it('', function(){
+      assert.equal(pn.hasCommonPrefix(["1", ""]), true);
+    });
+});
+
+describe('isConsistentNumberListPartioned', function() {
+    it('should return true when the argument is ["1"]', function(){
+      assert.equal(pn.isConsistentNumberListPartioned(["1"]), true);
+    });
+    // it('should return false when the argument is every number from 10000 to 29999', function(){
+    //   var allNums = []
+    //   for (var i = 10000; i < 30000; ++i) {
+    //         allNums.push(i.toString());
+    //   }
+    //   assert.equal(pn.isConsistentNumberList(allNums), true);
+    // });
 });
