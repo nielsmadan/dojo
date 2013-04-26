@@ -94,15 +94,18 @@ describe('removeFirstDigit', function() {
     });
 });
 
-describe('hasCommonPrefix', function() {
+describe('partitionExhausted', function() {
   it('', function(){
-      assert.equal(pn.hasCommonPrefix(["1"]), false);
+      assert.equal(pn.partitionExhausted(["1"]), false);
     });
   it('', function(){
-      assert.equal(pn.hasCommonPrefix(["1", "2"]), false);
+      assert.equal(pn.partitionExhausted(["1", "2"]), false);
     });
   it('', function(){
-      assert.equal(pn.hasCommonPrefix(["1", ""]), true);
+      assert.equal(pn.partitionExhausted(["1", ""]), true);
+    });
+  it('', function(){
+      assert.equal(pn.partitionExhausted([""]), false);
     });
 });
 
@@ -110,11 +113,30 @@ describe('isConsistentNumberListPartioned', function() {
     it('should return true when the argument is ["1"]', function(){
       assert.equal(pn.isConsistentNumberListPartioned(["1"]), true);
     });
+    it('should return true when the argument is ["1", "12"]', function(){
+      assert.equal(pn.isConsistentNumberListPartioned(["1", "12"]), false);
+    });
+    it('should return true when the argument is ["11", "112"]', function(){
+      assert.equal(pn.isConsistentNumberListPartioned(["11", "112"]), false);
+    });
+    it('should return true when the argument is ["91125426", "97625992", "911"]', function(){
+      assert.equal(pn.isConsistentNumberListPartioned(["91125426", "97625992", "911"]), false);
+    });
+    it('should return true when the argument is ["91125426", "97625992", "912"]', function(){
+      assert.equal(pn.isConsistentNumberListPartioned(["91125426", "97625992", "912"]), true);
+    });
     // it('should return false when the argument is every number from 10000 to 29999', function(){
     //   var allNums = []
     //   for (var i = 10000; i < 30000; ++i) {
     //         allNums.push(i.toString());
     //   }
-    //   assert.equal(pn.isConsistentNumberList(allNums), true);
+    //   assert.equal(pn.isConsistentNumberListPartioned(allNums), true);
+    // });
+    // it('should return false when the argument is every number from 1000000 to 3000000', function(){
+    //   var allNums = []
+    //   for (var i = 10000; i < 30000; ++i) {
+    //         allNums.push(i.toString());
+    //   }
+    //   assert.equal(pn.isConsistentNumberListPartioned(allNums), true);
     // });
 });

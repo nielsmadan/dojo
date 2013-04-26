@@ -27,8 +27,8 @@ module.exports = {
         return _removeFirstDigit(partionedList);
     },
 
-    hasCommonPrefix: function (partionedList) {
-        return _hasCommonPrefix(partionedList);
+    partitionExhausted: function (partionedList) {
+        return _partitionExhausted(partionedList);
     }
 }
 
@@ -83,6 +83,23 @@ function _isValidPhoneNumber(phoneNumber) {
 // if list contains two elements and one is "" = false
 
 function _isConsistentNumberListPartioned(validNumberList) {
+    return _isConsistentNumberListPartionedRecursive(_partitionList(validNumberList));
+}
+
+function _isConsistentNumberListPartionedRecursive(partionedList) {
+    for (var i = 0; i < partionedList.length; ++i) {
+        var newList = _removeFirstDigit(partionedList[i]);
+        if (_partitionExhausted(newList)) {
+            return false;
+        } else {
+            if (newList.length !== 1 &&
+                _isConsistentNumberListPartionedRecursive(_partitionList(newList))
+                === false) {
+                return false;
+            }
+        }
+    }
+
     return true;
 }
 
@@ -92,6 +109,6 @@ function _removeFirstDigit(partionedList){
     });    
 }
 
-function _hasCommonPrefix(partionedList) {
+function _partitionExhausted(partionedList) {
     return partionedList.length > 1 && partionedList.indexOf("") !== -1;
 }
