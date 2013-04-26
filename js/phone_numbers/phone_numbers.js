@@ -112,3 +112,29 @@ function _removeFirstDigit(partionedList){
 function _partitionExhausted(partionedList) {
     return partionedList.length > 1 && partionedList.indexOf("") !== -1;
 }
+
+//1. you insert past leaf
+//2. you stop inserting on a place that already exists
+
+function _insertValid(trie, number) {
+    var curnode = trie;
+    for (var i = 0; i < number.length; ++i) {
+        if (insertPastLeaf(trie, number[i])
+            || insertStopAlreadyE(trie, number[i], i, number.length)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function _isConsistentNumberListTrie (validNumberList) {
+    var trie = {};
+    // initialize with first number
+    for (var i = 0; i < validNumberList; ++i) {
+        var res = insertValid(trie, validNumberList[i]);
+        if (res === false)
+            return false;
+    }
+    return true;
+}
