@@ -29,6 +29,22 @@ module.exports = {
 
     partitionExhausted: function (partionedList) {
         return _partitionExhausted(partionedList);
+    },
+
+    insertPastLeaf: function (trie, number) {
+        return _insertPastLeaf(trie, number);
+    },
+
+    insertAlreadyExists: function (trie, number, idx, length) {
+        return _insertAlreadyExists(trie, number, idx, length)
+    },
+
+    insertValid: function (trie, number) {
+        return _insertValid(trie, number);
+    },
+
+    isConsistentNumberListTrie: function (validNumberList) {
+        return _isConsistentNumberListTrie(validNumberList);
     }
 }
 
@@ -113,15 +129,33 @@ function _partitionExhausted(partionedList) {
     return partionedList.length > 1 && partionedList.indexOf("") !== -1;
 }
 
+function _insertPastLeaf(curnode) {
+    return Object.keys(curnode).length === 0;
+}
+
+function _insertAlreadyExists(curnode, number, idx, length) {
+    return idx === length - 1 && curnode.hasOwnProperty(number);
+}
+
 //1. you insert past leaf
 //2. you stop inserting on a place that already exists
 
 function _insertValid(trie, number) {
     var curnode = trie;
+    var ownBranch = false;
     for (var i = 0; i < number.length; ++i) {
-        if (insertPastLeaf(trie, number[i])
-            || insertStopAlreadyE(trie, number[i], i, number.length)) {
+        if (!ownBranch &&
+            (_insertPastLeaf(curnode)
+            || _insertAlreadyExists(curnode, number[i], i, number.length))) {
             return false;
+        }
+        if (curnode.hasOwnProperty(number[i])) {
+            curnode = curnode[number[i]];
+        } else {
+            var newLetter = number[i];
+            curnode[newLetter] = {};
+            curnode = curnode[newLetter];
+            ownBranch = true;
         }
     }
 
@@ -130,9 +164,17 @@ function _insertValid(trie, number) {
 
 function _isConsistentNumberListTrie (validNumberList) {
     var trie = {};
+
+    var curnode = trie;
+    for (var i = 0; i < validNumberList[0].length; ++i) {
+        var newLetter = validNumberList[0][i];
+        curnode[newLetter] = {};
+        curnode = curnode[newLetter];
+    }
+
     // initialize with first number
-    for (var i = 0; i < validNumberList; ++i) {
-        var res = insertValid(trie, validNumberList[i]);
+    for (var i = 1; i < validNumberList.length; ++i) {
+        var res = _insertValid(trie, validNumberList[i]);
         if (res === false)
             return false;
     }

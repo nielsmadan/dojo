@@ -132,11 +132,90 @@ describe('isConsistentNumberListPartioned', function() {
     //   }
     //   assert.equal(pn.isConsistentNumberListPartioned(allNums), true);
     // });
+    it('should return false when the argument is every number from 1000000 to 3000000', function(){
+      var allNums = []
+      for (var i = 1000000; i < 3000000; ++i) {
+            allNums.push(i.toString());
+      }
+      assert.equal(pn.isConsistentNumberListPartioned(allNums), true);
+    });
     // it('should return false when the argument is every number from 1000000 to 3000000', function(){
     //   var allNums = []
-    //   for (var i = 10000; i < 30000; ++i) {
+    //   for (var i = 1000000; i < 3000000; ++i) {
     //         allNums.push(i.toString());
     //   }
-    //   assert.equal(pn.isConsistentNumberListPartioned(allNums), true);
+    //   assert.equal(pn.isConsistentNumberListTrie(allNums), true);
     // });
 });
+
+describe('insertPastLeaf', function() {
+  it('', function(){
+      assert.equal(pn.insertPastLeaf({}, "2"), true);
+    });
+  it('', function(){
+      assert.equal(pn.insertPastLeaf({"2": {}}, "2"), false);
+    });
+  });
+
+describe('insertAlreadyExists', function() {
+  it('', function(){
+      assert.equal(pn.insertAlreadyExists({"2": {"2": {}}}, "2", 1, 2), true);
+    });
+  it('', function(){
+      assert.equal(pn.insertAlreadyExists({"2": {"2": {}}}, "2", 1, 3), false);
+    });
+  it('', function(){
+      assert.equal(pn.insertAlreadyExists({"2": {"2": {}}}, "3", 1, 2), false);
+    });
+  });
+
+describe('insertValid', function() {
+  it('', function(){
+      assert.equal(pn.insertValid({"2": {"2": {}}}, "2"), false);
+    });
+  it('', function(){
+      assert.equal(pn.insertValid({"2": {"2": {}}}, "3"), true);
+    });
+  it('', function(){
+      assert.equal(pn.insertValid({"2": {"2": {}}}, "222"), false);
+    });
+  it('', function(){
+      assert.equal(pn.insertValid(
+        {"2": {"2": {"3": {}}, "3": {"2": {}}}}, "33"), true);
+    });
+  it('', function(){
+      assert.equal(pn.insertValid(
+        {"2": {"2": {"3": {}}, "3": {"2": {}}}}, "224"), true);
+    });
+  it('', function(){
+      assert.equal(pn.insertValid(
+        {"2": {"2": {"3": {}}, "3": {"2": {}}}}, "23"), false);
+    });
+  it('', function(){
+      assert.equal(pn.insertValid(
+        {"2": {"2": {"3": {}}, "3": {"2": {}}}}, "223"), false);
+    });
+  it('', function(){
+      assert.equal(pn.insertValid(
+        {"2": {"2": {"3": {}}, "3": {"2": {}}}}, "2234"), false);
+    });
+  it('', function(){
+      assert.equal(pn.insertValid(
+        {}, "2"), false);
+    });
+  });
+
+describe('isConsistentNumberListTrie', function() {
+  it('', function(){
+      assert.equal(pn.isConsistentNumberListTrie(["1", "2"]), true);
+    });
+  it('', function(){
+      assert.equal(pn.isConsistentNumberListTrie(["1", "12"]), false);
+    });
+  it('', function(){
+      assert.equal(pn.isConsistentNumberListTrie(["12", "1"]), false);
+    });
+  it('', function(){
+      assert.equal(pn.isConsistentNumberListTrie(["12", "13"]), true);
+    });
+  });
