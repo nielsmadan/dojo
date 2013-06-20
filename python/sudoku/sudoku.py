@@ -45,7 +45,7 @@ def find_block_index(x, y):
     return x / 3, y / 3
 
 
-def valid_board(
+#def valid_board(
 
 
 # def generate_sudoku():
@@ -58,5 +58,5 @@ def valid_board(
 #     pass
 
 
-if __name__ == "__main__":
-    print_board(create_board())
+#if __name__ == "__main__":
+ #   print_board(create_board())
