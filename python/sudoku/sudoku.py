@@ -1,8 +1,12 @@
 BOARD_SIZE = 9
-
+import copy
 
 def create_board():
-    return [[0] * BOARD_SIZE] * BOARD_SIZE
+    board = []
+    for i in range(0, BOARD_SIZE):
+        board.append([0] * BOARD_SIZE)
+
+    return board
 
 
 def print_board(board):
@@ -44,19 +48,51 @@ def extract_block(board, blockX, blockY):
 def find_block_index(x, y):
     return x / 3, y / 3
 
+def has_next(y, x):
+    if x == BOARD_SIZE - 1 and y == BOARD_SIZE - 1:
+        return False
+    return True
 
-#def valid_board(
+def next(y, x):
+    if x < BOARD_SIZE - 1:
+        return (y, x + 1)
+    elif x == BOARD_SIZE - 1:
+        assert(y < BOARD_SIZE)
+        return (y + 1, 0)
+    else:
+        assert(0)
 
 
-# def generate_sudoku():
-#     board = create_board()
-# 
-#     return generate_sudoku_recurse(board, 0, 0)
-# 
-# 
-# def generate_sudoku_recurse(board, x, y):
-#     pass
+def generate_sudoku():
+    board = create_board()
+    generate_sudoku_recurse(board, 0, 0)
+    return board
+
+NITER = 0
+def generate_sudoku_recurse(board, y, x):
+    global NITER
+    NITER += 1
+    print "generate_sudoku_recurse(", y, ", ", x, ")"
+    for i in range(1,10):
+        if valid_for_block(extract_block(board, x/3, y/3), i)\
+            and valid_for_row(board[y], i)\
+            and valid_for_column(extract_column(board, x), i):
+
+            newboard = copy.deepcopy(board)
+            print "found: ", i, "NITER: ", NITER
+            newboard[y][x] = i
+            print_board(newboard)
+            if has_next(y, x):
+                if generate_sudoku_recurse(newboard, *next(y, x)):
+                    board = newboard
+                    return True
+                 
+            else:
+                board = newboard
+                return True
+    return False
 
 
-#if __name__ == "__main__":
- #   print_board(create_board())
+if __name__ == "__main__":
+    #generate_sudoku()
+    print_board(generate_sudoku())
