@@ -1,6 +1,35 @@
-from nose.tools import eq_
+from nose.tools import eq_, with_setup
 
 import sudoku
+import random
+
+
+ORIGINAL_SHUFFLE = random.shuffle
+
+
+NO_SHUFFLE_BOARD = [[1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    [4, 5, 6, 7, 8, 9, 1, 2, 3],
+                    [7, 8, 9, 1, 2, 3, 4, 5, 6],
+                    [2, 1, 4, 3, 6, 5, 8, 9, 7],
+                    [3, 6, 5, 8, 9, 7, 2, 1, 4],
+                    [8, 9, 7, 2, 1, 4, 3, 6, 5],
+                    [5, 3, 1, 6, 4, 2, 9, 7, 8],
+                    [6, 4, 2, 9, 7, 8, 5, 3, 1],
+                    [9, 7, 8, 5, 3, 1, 6, 4, 2]]
+
+
+def setup_shuffle():
+    random.shuffle = lambda x: None
+
+
+def teardown_shuffle():
+    random.shuffle = ORIGINAL_SHUFFLE
+
+
+@with_setup(setup_shuffle, teardown_shuffle)
+def test_generate_sudoku_recurse():
+    result = sudoku.generate_sudoku()
+    eq_(result, NO_SHUFFLE_BOARD)
 
 
 def valid_seq(seq):

@@ -3,6 +3,7 @@ import copy
 
 
 BOARD_SIZE = 9
+BOARD_MAX_INDEX = BOARD_SIZE - 1
 
 
 def limit_calls(limit, limit_return=None):
@@ -33,8 +34,8 @@ def print_board(board):
     print '\n'.join(['%s' % row for row in board])
 
 
-def valid_for_seq(row):
-    return [num for num in range(1, 10) if num not in row]
+def valid_for_seq(seq):
+    return [num for num in range(1, 10) if num not in seq]
 
 
 def valid_for_block(board, x, y):
@@ -69,22 +70,29 @@ def generate_sudoku():
     return generate_sudoku_recurse(create_board())
 
 
-def valid_numbers(board, y, x):
-    return [num for num in range(1, 10)
-                if num in valid_for_block(board, x, y) and
-                   num in valid_for_column(board, x) and
-                   num in valid_for_row(board, y)]
+def valid_for_cell(board, y, x):
+    return (set(valid_for_block(board, x, y)) &
+            set(valid_for_column(board, x)) &
+            set(valid_for_row(board, y)))
 
 
-# @limit_calls(18, True)
+def next_xy(board):
+    return next((y, x) for y in xrange(BOARD_SIZE)
+                       for x in xrange(BOARD_SIZE) if board[y][x] == 0)
+
+
+def board_completed(board):
+    return board[BOARD_MAX_INDEX][BOARD_MAX_INDEX] != 0
+
+
+# @limit_calls(5, True)
 def generate_sudoku_recurse(board):
-    if board[BOARD_SIZE - 1][BOARD_SIZE - 1] != 0:
+    if board_completed(board):
         return board
     else:
-        y, x = [(y, x) for y, row in enumerate(board)
-                       for x, column in enumerate(row) if board[y][x] == 0][0]
+        y, x = next_xy(board)
 
-        valid_nums = valid_numbers(board, y, x)
+        valid_nums = list(valid_for_cell(board, y, x))
         random.shuffle(valid_nums)
         for num in valid_nums:
             newboard = copy.deepcopy(board)
