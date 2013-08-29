@@ -1,5 +1,6 @@
 import astar
 from nose.tools import eq_, ok_
+from math import sqrt
 
 FULL_TEST_GRAPH = (
     "---------------------",
@@ -63,6 +64,13 @@ def test_get_neighbors_one_column_neighbor():
     eq_(neighbor_list, [node_a])
 
 
+def test_get_neighbors_none_neighbor():
+    node_a = astar.Node()
+
+    neighbor_list = astar.get_neighbors([[node_a], [None]], 0, 0)
+    eq_(neighbor_list, [])
+
+
 def test_find_ancestors():
     input_dict = {
         'b': 'a',
@@ -89,7 +97,7 @@ def test_find_ancestors_two_levels():
 def test_dijkstra_two_node_graph():
     graph = astar.Graph.from_string("ST")
 
-    result = astar.dijkstra(graph, graph.start_node, graph.target_node)
+    result = astar.PathFinder(astar.dijkstra_cost_function)(graph, graph.start_node, graph.target_node)
 
     eq_(result, [graph.start_node, graph.target_node])
 
@@ -105,7 +113,7 @@ def test_dijkstra_three_node_graph():
     graph.add_node(middle_node, [start_node, target_node])
     graph.add_node(target_node, [middle_node])
 
-    result = astar.dijkstra(graph, start_node, target_node)
+    result = astar.PathFinder(astar.dijkstra_cost_function)(graph, start_node, target_node)
 
     eq_(result, [start_node, middle_node, target_node])
 
@@ -121,7 +129,7 @@ def test_dijkstra_impossible():
     graph.add_node(middle_node, [start_node])
     graph.add_node(target_node, [])
 
-    result = astar.dijkstra(graph, start_node, target_node)
+    result = astar.PathFinder(astar.dijkstra_cost_function)(graph, start_node, target_node)
 
     eq_(result, None)
 
@@ -129,10 +137,30 @@ def test_dijkstra_impossible():
 def test_dijkstra_complex_graph():
     graph = astar.Graph.from_string(FULL_TEST_GRAPH)
 
-    result = astar.dijkstra(graph, graph.start_node, graph.target_node)
+    path_finder = astar.PathFinder(astar.dijkstra_cost_function)
+    result = path_finder(graph, graph.start_node, graph.target_node)
 
     eq_(result[0], graph.start_node)
     eq_(result[-1], graph.target_node)
+#
+#     print "DIJKSTRA VISITED: %s" % path_finder.nodes_visited
+#     print "DIJKSTRA EXPANDED: %s" % path_finder.nodes_expanded
 
-    # for i, node in enumerate(result[:-1]):
-    #     eq_(graph.node_dict[node]
+
+def test_astar_complex_graph():
+    graph = astar.Graph.from_string(FULL_TEST_GRAPH)
+
+    path_finder = astar.PathFinder(astar.astar_cost_function)
+    result = path_finder(graph, graph.start_node, graph.target_node)
+
+    eq_(result[0], graph.start_node)
+    eq_(result[-1], graph.target_node)
+#
+#     print "ASTAR VISITED: %s" % path_finder.nodes_visited
+#     print "ASTAR EXPANDED: %s" % path_finder.nodes_expanded
+
+
+def test_euclidean_distance():
+    result = astar.euclidean_distance(astar.Node(1, 1), astar.Node(2, 2))
+
+    eq_(result, sqrt(2))
