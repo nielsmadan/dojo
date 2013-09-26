@@ -118,8 +118,6 @@ def euclidean_distance(node1, node2):
 
 
 def astar_cost_function(current_distance, current_node, target_node):
-    # print "CURRENT NODE: %s" % current_node
-    # print "TARGET NODE: %s" % target_node
     return current_distance + euclidean_distance(current_node, target_node)
 
 
@@ -134,8 +132,6 @@ class PathFinder(object):
         self.nodes_expanded = 0
 
     def __call__(self, graph, start_node, target_node):
-        print graph
-
         frontier = PriorityQueue()
 
         current_node = start_node
@@ -146,8 +142,6 @@ class PathFinder(object):
 
         while True:
             neighbors = graph.get_neighbors(current_node)
-#
-#             print neighbors
 
             current_distance = distance_dict[current_node]
 

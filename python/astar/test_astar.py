@@ -142,9 +142,9 @@ def test_dijkstra_complex_graph():
 
     eq_(result[0], graph.start_node)
     eq_(result[-1], graph.target_node)
-#
-#     print "DIJKSTRA VISITED: %s" % path_finder.nodes_visited
-#     print "DIJKSTRA EXPANDED: %s" % path_finder.nodes_expanded
+
+    print "DIJKSTRA VISITED: %s" % path_finder.nodes_visited
+    print "DIJKSTRA EXPANDED: %s" % path_finder.nodes_expanded
 
 
 def test_astar_complex_graph():
@@ -155,9 +155,9 @@ def test_astar_complex_graph():
 
     eq_(result[0], graph.start_node)
     eq_(result[-1], graph.target_node)
-#
-#     print "ASTAR VISITED: %s" % path_finder.nodes_visited
-#     print "ASTAR EXPANDED: %s" % path_finder.nodes_expanded
+
+    print "ASTAR VISITED: %s" % path_finder.nodes_visited
+    print "ASTAR EXPANDED: %s" % path_finder.nodes_expanded
 
 
 def test_euclidean_distance():
