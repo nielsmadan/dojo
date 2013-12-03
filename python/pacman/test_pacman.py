@@ -65,8 +65,82 @@ def test_get_pacman_char_looking_left():
 
 def test_search_pacman():
     pacman_pos = pacman.search_pacman(["...", "...", "...", "...", "..<"])
-    eq_(pacman_pos, (2, 4))
+    eq_(pacman_pos, (2, 4, '<'))
 
 
-# def test_move_pacman():
-#     new_board = pacman.move_pacman(["..", "<.", ".."])
+def test_find_new_pos_right():
+    new_board = pacman.find_new_pos(["..", "<.", ".."])
+    eq_(new_board, (1, 1))
+
+
+def test_find_new_pos_left():
+    new_board = pacman.find_new_pos(["..", ".>", ".."])
+    eq_(new_board, (0, 1))
+
+
+def test_find_new_pos_up():
+    new_board = pacman.find_new_pos(["..", ".V", ".."])
+    eq_(new_board, (1, 0))
+
+
+def test_find_new_pos_down():
+    new_board = pacman.find_new_pos(["..", ".A", ".."])
+    eq_(new_board, (1, 2))
+
+
+def test_find_new_pos_right_edge():
+    new_board = pacman.find_new_pos(["..",
+                                     ".<",
+                                     ".."])
+    eq_(new_board, (0, 1))
+
+
+def test_find_new_pos_left_edge():
+    new_board = pacman.find_new_pos(["..",
+                                     ">.",
+                                     ".."])
+    eq_(new_board, (1, 1))
+
+
+def test_find_new_pos_up_edge():
+    new_board = pacman.find_new_pos(["V.",
+                                     "..",
+                                     ".."])
+    eq_(new_board, (0, 2))
+
+
+def test_find_new_pos_down_edge():
+    new_board = pacman.find_new_pos(["..",
+                                     "..",
+                                     "A."])
+    eq_(new_board, (0, 0))
+
+
+def test_clear_pos():
+    new_board = pacman.clear_pos(["."], 0, 0)
+    eq_(new_board, [' '])
+
+
+def test_move_pacman_right():
+    new_board = pacman.move_pacman(["..", "<.", ".."])
+    eq_(new_board, ["..", " <", ".."])
+
+
+def test_move_pacman_left():
+    new_board = pacman.move_pacman(["..", ".>", ".."])
+    eq_(new_board, ["..", "> ", ".."])
+
+
+def test_move_pacman_up():
+    new_board = pacman.move_pacman(["..", ".V", ".."])
+    eq_(new_board, [".V", ". ", ".."])
+
+
+def test_move_pacman_down():
+    new_board = pacman.move_pacman(["..", ".A", ".."])
+    eq_(new_board, ["..", ". ", ".A"])
+
+
+def test_change_pacman_heading():
+    new_board = pacman.change_pacman_heading(["..", ".A", ".."], pacman.UP)
+    eq_(new_board, ["..", ".V", ".."])
