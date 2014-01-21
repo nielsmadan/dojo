@@ -144,3 +144,92 @@ def test_move_pacman_down():
 def test_change_pacman_heading():
     new_board = pacman.change_pacman_heading(["..", ".A", ".."], pacman.UP)
     eq_(new_board, ["..", ".V", ".."])
+
+
+def test_user_input():
+    pacman.add_user_input(pacman.UP)
+
+    eq_(pacman.get_next_input(), pacman.UP)
+
+
+def test_user_input():
+    pacman.add_user_input(pacman.UP)
+    pacman.add_user_input(pacman.DOWN)
+
+    eq_(pacman.get_next_input(), pacman.UP)
+    eq_(pacman.get_next_input(), pacman.DOWN)
+
+
+def test_nouser_input():
+    eq_(pacman.get_next_input(), None)
+
+    pacman.add_user_input(pacman.UP)
+    eq_(pacman.get_next_input(), pacman.UP)
+    eq_(pacman.get_next_input(), None)
+
+
+def test_single_tick():
+    board = pacman.State(["..", ".A", ".."])
+    new_state = pacman.tick(board)
+    eq_(new_state.board, ["..", ". ", ".A"])
+
+
+def test_process_user_input():
+    board = ["..", ".A", ".."]
+    pacman.add_user_input(pacman.LEFT)
+    new_board = pacman.process_user_input(board)
+    eq_(new_board, ["..", ".>", ".."])
+
+
+def test_single_tick_with_user_input():
+    state = pacman.State(["..", ".A", ".."])
+    pacman.add_user_input(pacman.LEFT)
+    new_state = pacman.tick(state)
+    eq_(new_state.board, ["..", "> ", ".."])
+
+
+def test_double_tick_with_user_input():
+    state = pacman.State(["..", ".A", ".."])
+    pacman.add_user_input(pacman.LEFT)
+    pacman.add_user_input(pacman.RIGHT)
+    new_state = pacman.tick(state)
+    eq_(new_state.board, ["..", "< ", ".."])
+#
+#
+# def test_get_score():
+#     board = ["<."]
+#     new_state = pacman.tick(board)
+#
+#     score = pacman.get_score()
+
+
+def test_level_completed():
+    board = ["  ", "  ", "<."]
+    new_state = pacman.tick(pacman.State(board))
+    eq_(new_state.board, ["  ", "  ", " <"])
+    eq_(new_state.status, pacman.LEVEL_COMPLETED)
+
+
+def test_level_in_progress():
+    board = ["  ", "..", "<."]
+    new_state = pacman.tick(pacman.State(board))
+    eq_(new_state.board, ["  ", "..", " <"])
+    eq_(new_state.status, pacman.LEVEL_IN_PROGRESS)
+
+
+def test_level_end_to_end():
+    board = ["<.", ".."]
+
+    new_state = pacman.tick(pacman.State(board))
+    eq_(new_state.board, [" <", ".."])
+    eq_(new_state.status, pacman.LEVEL_IN_PROGRESS)
+
+    pacman.add_user_input(pacman.DOWN)
+    new_state = pacman.tick(new_state)
+    eq_(new_state.board, ["  ", ".A"])
+    eq_(new_state.status, pacman.LEVEL_IN_PROGRESS)
+
+    pacman.add_user_input(pacman.LEFT)
+    new_state = pacman.tick(new_state)
+    eq_(new_state.board, ["  ", "> "])
+    eq_(new_state.status, pacman.LEVEL_COMPLETED)
