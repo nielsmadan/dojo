@@ -8,6 +8,7 @@ PACMAN_REPRS = [RIGHT, LEFT, UP, DOWN]
 
 LEVEL_COMPLETED = 0
 LEVEL_IN_PROGRESS = 1
+LEVEL_FAILED = 2
 
 
 class State(object):
@@ -15,6 +16,9 @@ class State(object):
         self.board = board
         self.status = status
         self.score = score
+
+    def __eq__(self, other):
+        return self.board == other.board and self.status == other.status and self.score == other.score
 
 
 def get_pacman_char(heading):
@@ -72,12 +76,47 @@ def clear_pos(board, column, row):
     return set_cell(board, column, row, ' ')
 
 
-def move_pacman(board):
-    new_column, new_row = find_new_pos(board)
-    column, row, heading = search_pacman(board)
-    board = clear_pos(board, column, row)
+def encounter_wall(state):
+    return state
+
+
+def encounter_ghost(state):
+    state.status = LEVEL_FAILED
+    return state
+
+
+def encounter_dot(state):
+    state.score = state.score + 1
+
+    state = move_pacman(state)
+
+    dot_found = any([cell == "." for row in state.board for cell in row])
+
+    state.status = LEVEL_IN_PROGRESS if dot_found else LEVEL_COMPLETED
+
+    return state
+
+
+def encounter_space(state):
+    return move_pacman(state)
+
+
+ENCOUNTER_MAP = {
+    ' ': encounter_space,
+    '.': encounter_dot,
+    '#': encounter_wall,
+    '@': encounter_ghost
+}
+
+
+def move_pacman(state):
+    new_column, new_row = find_new_pos(state.board)
+    column, row, heading = search_pacman(state.board)
+    board = clear_pos(state.board, column, row)
+
     board = set_pacman(board, new_column, new_row, heading)
-    return board
+
+    return State(board, state.status, state.score)
 
 
 def change_pacman_heading(board, new_heading):
@@ -87,8 +126,10 @@ def change_pacman_heading(board, new_heading):
 
 user_input_queue = deque()
 
+
 def add_user_input(key):
     user_input_queue.append(key)
+
 
 def get_next_input():
     if len(user_input_queue) == 0:
@@ -107,14 +148,11 @@ def process_user_input(board):
 
 
 def tick(state):
-    board = process_user_input(state.board)
-    board = move_pacman(board)
+    state.board = process_user_input(state.board)
+    new_column, new_row = find_new_pos(state.board)
+    newstate = ENCOUNTER_MAP[state.board[new_row][new_column]](state)
 
-    dot_found = any([cell == "." for row in board for cell in row])
-
-    status = LEVEL_IN_PROGRESS if dot_found else LEVEL_COMPLETED
-
-    return State(board, status, 0)
+    return newstate
 
 if __name__ == "__main__":
     print level_to_string(["...", "...", "...", "...", "..."])

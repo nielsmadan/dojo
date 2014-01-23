@@ -122,23 +122,23 @@ def test_clear_pos():
 
 
 def test_move_pacman_right():
-    new_board = pacman.move_pacman(["..", "<.", ".."])
-    eq_(new_board, ["..", " <", ".."])
+    new_state = pacman.move_pacman(pacman.State(["..", "<.", ".."]))
+    eq_(new_state.board, ["..", " <", ".."])
 
 
 def test_move_pacman_left():
-    new_board = pacman.move_pacman(["..", ".>", ".."])
-    eq_(new_board, ["..", "> ", ".."])
+    new_state = pacman.move_pacman(pacman.State(["..", ".>", ".."]))
+    eq_(new_state.board, ["..", "> ", ".."])
 
 
 def test_move_pacman_up():
-    new_board = pacman.move_pacman(["..", ".V", ".."])
-    eq_(new_board, [".V", ". ", ".."])
+    new_state = pacman.move_pacman(pacman.State(["..", ".V", ".."]))
+    eq_(new_state.board, [".V", ". ", ".."])
 
 
 def test_move_pacman_down():
-    new_board = pacman.move_pacman(["..", ".A", ".."])
-    eq_(new_board, ["..", ". ", ".A"])
+    new_state = pacman.move_pacman(pacman.State(["..", ".A", ".."]))
+    eq_(new_state.board, ["..", ". ", ".A"])
 
 
 def test_change_pacman_heading():
@@ -194,13 +194,48 @@ def test_double_tick_with_user_input():
     pacman.add_user_input(pacman.RIGHT)
     new_state = pacman.tick(state)
     eq_(new_state.board, ["..", "< ", ".."])
-#
-#
-# def test_get_score():
-#     board = ["<."]
-#     new_state = pacman.tick(board)
-#
-#     score = pacman.get_score()
+
+
+def test_get_score_basic():
+    state = pacman.State(["<."])
+    new_state = pacman.tick(state)
+
+    eq_(new_state.score, 1)
+
+
+def test_get_score_2scores():
+    state = pacman.State(["<.."])
+    new_state = pacman.tick(state)
+    new_state = pacman.tick(new_state)
+
+    eq_(new_state.score, 2)
+
+
+def test_get_score_2score_and_space():
+    state = pacman.State(["<. ."])
+    new_state = pacman.tick(state)
+    new_state = pacman.tick(new_state)
+
+    eq_(new_state.score, 1)
+
+def test_get_score_2score_and_wrap():
+    state = pacman.State([".<."])
+    new_state = pacman.tick(state)
+    new_state = pacman.tick(new_state)
+
+    eq_(new_state.score, 2)
+
+
+def test_wall():
+    state = pacman.State(["<#"])
+    new_state = pacman.tick(state)
+    eq_(new_state.board, ["<#"])
+
+
+def test_static_ghost():
+    state = pacman.State(["<@"])
+    new_state = pacman.tick(state)
+    eq_(new_state.status, pacman.LEVEL_FAILED)
 
 
 def test_level_completed():
@@ -233,3 +268,12 @@ def test_level_end_to_end():
     new_state = pacman.tick(new_state)
     eq_(new_state.board, ["  ", "> "])
     eq_(new_state.status, pacman.LEVEL_COMPLETED)
+
+def test_encounter_wall():
+    state = pacman.State([".#<", "..."])
+    new_state = pacman.encounter_wall(state)
+    eq_(new_state, state)
+
+
+
+
