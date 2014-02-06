@@ -67,6 +67,10 @@ def test_search_pacman():
     pacman_pos = pacman.search_pacman(["...", "...", "...", "...", "..<"])
     eq_(pacman_pos, (2, 4, '<'))
 
+def test_search_ghost():
+    ghost_pos = pacman.search_ghost(["...", "...", "...", "...", "..@"])
+    eq_(ghost_pos, (2, 4, '@'))
+
 
 def test_find_new_pos_right():
     new_board = pacman.find_new_pos(["..", "<.", ".."])
@@ -232,9 +236,34 @@ def test_wall():
     eq_(new_state.board, ["<#"])
 
 
-def test_static_ghost():
-    state = pacman.State(["<@"])
+def test_ghost_movement_right():
+    state = pacman.State(["<.", "..", "@.", ".."])
     new_state = pacman.tick(state)
+    eq_(new_state.board, [" <", "..", ".@", ".."])
+
+
+def test_ghost_movement_right_near_edge():
+    state = pacman.State(["<.", "..", ".@", ".."])
+    new_state = pacman.tick(state)
+    eq_(new_state.board, [" <", "..", "@.", ".."])
+
+
+def test_ghost_movement_right_near_edge():
+    state = pacman.State(["<.", "..", "o ", ".."])
+    new_state = pacman.tick(state)
+    eq_(new_state.board, [" <", "..", " o", ".."])
+
+
+def test_ghost_movement_right_near_the_wall():
+    state = pacman.State(["<.", "..", "@#", ".."])
+    new_state = pacman.tick(state)
+    eq_(new_state.board, [" <", "..", "@#", ".."])
+
+
+def test_ghost_movement_to_pacman():
+    state = pacman.State(["..", "..", "@.", ".V"])
+    new_state = pacman.tick(state)
+    state = pacman.State(["..", "..", ".@", ". "])
     eq_(new_state.status, pacman.LEVEL_FAILED)
 
 
@@ -273,7 +302,3 @@ def test_encounter_wall():
     state = pacman.State([".#<", "..."])
     new_state = pacman.encounter_wall(state)
     eq_(new_state, state)
-
-
-
-

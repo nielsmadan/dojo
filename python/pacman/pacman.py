@@ -5,6 +5,8 @@ UP = 'V'
 DOWN = 'A'
 
 PACMAN_REPRS = [RIGHT, LEFT, UP, DOWN]
+GHOST_REPRS = ["O", "@"]
+WALL_REPR = '#'
 
 LEVEL_COMPLETED = 0
 LEVEL_IN_PROGRESS = 1
@@ -44,13 +46,17 @@ def set_cell(board, column, row, new_cell):
 def set_pacman(board, column, row, heading):
     return set_cell(board, column, row, get_pacman_char(heading))
 
-
-def search_pacman(board):
+def search_actors(board, actors_reprs):
     for row in range(len(board)):
         for column in range(len(board[row])):
-            if board[row][column] in PACMAN_REPRS:
+            if board[row][column] in actors_reprs:
                 return (column, row, board[row][column])
 
+def search_pacman(board):
+    return search_actors(board, PACMAN_REPRS)
+
+def search_ghost(board):
+    return search_actors(board, GHOST_REPRS)
 
 def find_new_pos(board):
     max_column = len(board[0])
@@ -104,7 +110,7 @@ def encounter_space(state):
 ENCOUNTER_MAP = {
     ' ': encounter_space,
     '.': encounter_dot,
-    '#': encounter_wall,
+    WALL_REPR: encounter_wall,
     '@': encounter_ghost
 }
 
@@ -117,6 +123,36 @@ def move_pacman(state):
     board = set_pacman(board, new_column, new_row, heading)
 
     return State(board, state.status, state.score)
+
+def find_new_ghost_pos(state):
+    max_column = len(state.board[0])
+    max_row = len(state.board)
+
+    column_pos, row_pos, _ = search_ghost(state.board)
+
+    # always heading right (for now)
+    new_column_pos = (column_pos + 1) % max_column
+
+    if state.board[row_pos][new_column_pos] == WALL_REPR:
+        return (column_pos, row_pos)
+    elif state.board[row_pos][new_column_pos] in PACMAN_REPRS:
+        state.status = LEVEL_FAILED
+        return (column_pos, row_pos)
+
+    return (new_column_pos, row_pos)
+
+def move_ghost(state):
+    ghost = search_ghost(state.board)
+
+    if ghost is None:
+        return state
+
+    new_column, new_row = find_new_ghost_pos(state)
+    column, row, _ = ghost
+
+    state.board = set_cell(set_cell(state.board, column, row, '.'), new_column, new_row, "@")
+
+    return state
 
 
 def change_pacman_heading(board, new_heading):
@@ -146,11 +182,17 @@ def process_user_input(board):
 
     return board
 
+def handle_pacman(state):
+    new_column, new_row = find_new_pos(state.board)
+    return ENCOUNTER_MAP[state.board[new_row][new_column]](state)
+
+def handle_ghost(state):
+    return move_ghost(state)
 
 def tick(state):
     state.board = process_user_input(state.board)
-    new_column, new_row = find_new_pos(state.board)
-    newstate = ENCOUNTER_MAP[state.board[new_row][new_column]](state)
+    newstate = handle_pacman(state)
+    newstate = handle_ghost(newstate)
 
     return newstate
 
