@@ -248,10 +248,16 @@ def test_ghost_movement_right_near_edge():
     eq_(new_state.board, [" <", "..", "@.", ".."])
 
 
-def test_ghost_movement_right_near_edge():
+def test_ghost_movement_right_without_dot():
     state = pacman.State(["<.", "..", "o ", ".."])
     new_state = pacman.tick(state)
     eq_(new_state.board, [" <", "..", " o", ".."])
+
+
+def test_ghost_movement_right_from_dot_to_no_dot():
+    state = pacman.State(["<.", "..", "o.", ".."])
+    new_state = pacman.tick(state)
+    eq_(new_state.board, [" <", "..", " @", ".."])
 
 
 def test_ghost_movement_right_near_the_wall():

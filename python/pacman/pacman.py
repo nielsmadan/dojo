@@ -5,7 +5,7 @@ UP = 'V'
 DOWN = 'A'
 
 PACMAN_REPRS = [RIGHT, LEFT, UP, DOWN]
-GHOST_REPRS = ["O", "@"]
+GHOST_REPRS = ["o", "@"]
 WALL_REPR = '#'
 
 LEVEL_COMPLETED = 0
@@ -148,9 +148,18 @@ def move_ghost(state):
         return state
 
     new_column, new_row = find_new_ghost_pos(state)
-    column, row, _ = ghost
+    column, row, character = ghost
 
-    state.board = set_cell(set_cell(state.board, column, row, '.'), new_column, new_row, "@")
+    new_cell = "."
+    if character == "o":
+        new_cell = " "
+
+    new_ghost = "@"
+    if state.board[new_row][new_column] == " ":
+        new_ghost = "o"
+
+    state.board = set_cell(set_cell(state.board, column, row, new_cell),
+            new_column, new_row, new_ghost)
 
     return state
 
