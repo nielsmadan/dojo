@@ -19,12 +19,18 @@ class State(object):
         self.status = status
         self.score = score
 
+    def set_cell(self, column, row, new_cell):
+        self.board[row] = (self.board[row][:column] + new_cell + self.board[row][column + 1:])
+        return self
+
+    def get_pacman_char(self, heading):
+        return heading
+
+    def set_pacman(self, column, row, heading):
+        return self.set_cell(column, row, self.get_pacman_char(heading))
+
     def __eq__(self, other):
         return self.board == other.board and self.status == other.status and self.score == other.score
-
-
-def get_pacman_char(heading):
-    return heading
 
 
 def create_level(width, height):
@@ -37,14 +43,6 @@ def create_level(width, height):
 def level_to_string(board):
     return "\n".join(board) + "\n"
 
-
-def set_cell(board, column, row, new_cell):
-    board[row] = (board[row][:column] + new_cell + board[row][column + 1:])
-    return board
-
-
-def set_pacman(board, column, row, heading):
-    return set_cell(board, column, row, get_pacman_char(heading))
 
 def search_actors(board, actors_reprs):
     for row in range(len(board)):
@@ -78,8 +76,8 @@ def find_new_pos(board):
     return (new_column_pos, new_row_pos)
 
 
-def clear_pos(board, column, row):
-    return set_cell(board, column, row, ' ')
+def clear_pos(state, column, row):
+    return state.set_cell(column, row, ' ').board
 
 
 def encounter_wall(state):
@@ -118,11 +116,9 @@ ENCOUNTER_MAP = {
 def move_pacman(state):
     new_column, new_row = find_new_pos(state.board)
     column, row, heading = search_pacman(state.board)
-    board = clear_pos(state.board, column, row)
+    board = clear_pos(state, column, row)
 
-    board = set_pacman(board, new_column, new_row, heading)
-
-    return State(board, state.status, state.score)
+    return state.set_pacman(new_column, new_row, heading)
 
 def find_new_ghost_pos(state):
     max_column = len(state.board[0])
@@ -158,15 +154,12 @@ def move_ghost(state):
     if state.board[new_row][new_column] == " ":
         new_ghost = "o"
 
-    state.board = set_cell(set_cell(state.board, column, row, new_cell),
-            new_column, new_row, new_ghost)
-
-    return state
+    return state.set_cell(column, row, new_cell).set_cell(new_column, new_row, new_ghost)
 
 
-def change_pacman_heading(board, new_heading):
-    column, row, heading = search_pacman(board)
-    return set_pacman(board, column, row, new_heading)
+def change_pacman_heading(state, new_heading):
+    column, row, heading = search_pacman(state.board)
+    return state.set_pacman(column, row, new_heading).board
 
 
 user_input_queue = deque()
@@ -182,14 +175,14 @@ def get_next_input():
 
     return user_input_queue.popleft()
 
-def process_user_input(board):
+def process_user_input(state):
     next_input = get_next_input()
 
     while next_input != None:
-        board = change_pacman_heading(board, next_input)
+        state.board = change_pacman_heading(state, next_input)
         next_input = get_next_input()
 
-    return board
+    return state.board
 
 def handle_pacman(state):
     new_column, new_row = find_new_pos(state.board)
@@ -199,7 +192,7 @@ def handle_ghost(state):
     return move_ghost(state)
 
 def tick(state):
-    state.board = process_user_input(state.board)
+    state.board = process_user_input(state)
     newstate = handle_pacman(state)
     newstate = handle_ghost(newstate)
 

@@ -41,25 +41,25 @@ def test_3x5_level_to_string():
 
 
 def test_set_pacman():
-    board = pacman.set_pacman(["...", "...", "...", "...", "..."], 1, 1, pacman.RIGHT)
+    state = pacman.State(["...", "...", "...", "...", "..."]).set_pacman(1, 1, pacman.RIGHT)
 
-    eq_(board, ["...", ".<.", "...", "...", "..."])
+    eq_(state.board, ["...", ".<.", "...", "...", "..."])
 
 
 def test_set_pacman_edge():
-    board = pacman.set_pacman(["...", "...", "...", "...", "..."], 0, 0, pacman.RIGHT)
+    state = pacman.State(["...", "...", "...", "...", "..."]).set_pacman(0, 0, pacman.RIGHT)
 
-    eq_(board, ["<..", "...", "...", "...", "..."])
+    eq_(state.board, ["<..", "...", "...", "...", "..."])
 
 
 def test_set_pacman_corner():
-    board = pacman.set_pacman(["...", "...", "...", "...", "..."], 2, 4, pacman.RIGHT)
+    state = pacman.State(["...", "...", "...", "...", "..."]).set_pacman(2, 4, pacman.RIGHT)
 
-    eq_(board, ["...", "...", "...", "...", "..<"])
+    eq_(state.board, ["...", "...", "...", "...", "..<"])
 
 
 def test_get_pacman_char_looking_left():
-    pacman_char = pacman.get_pacman_char(pacman.LEFT)
+    pacman_char = pacman.State([]).get_pacman_char(pacman.LEFT)
     eq_(pacman_char, ">")
 
 
@@ -121,7 +121,7 @@ def test_find_new_pos_down_edge():
 
 
 def test_clear_pos():
-    new_board = pacman.clear_pos(["."], 0, 0)
+    new_board = pacman.clear_pos(pacman.State(["."]), 0, 0)
     eq_(new_board, [' '])
 
 
@@ -146,7 +146,7 @@ def test_move_pacman_down():
 
 
 def test_change_pacman_heading():
-    new_board = pacman.change_pacman_heading(["..", ".A", ".."], pacman.UP)
+    new_board = pacman.change_pacman_heading(pacman.State(["..", ".A", ".."]), pacman.UP)
     eq_(new_board, ["..", ".V", ".."])
 
 
@@ -181,7 +181,7 @@ def test_single_tick():
 def test_process_user_input():
     board = ["..", ".A", ".."]
     pacman.add_user_input(pacman.LEFT)
-    new_board = pacman.process_user_input(board)
+    new_board = pacman.process_user_input(pacman.State(board))
     eq_(new_board, ["..", ".>", ".."])
 
 
