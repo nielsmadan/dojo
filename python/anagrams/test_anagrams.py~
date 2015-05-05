@@ -1,0 +1,15 @@
+import anagrams
+from nose.tools import eq_
+
+
+def test_is_anagram():
+    eq_(anagrams.is_anagram("abc", "cba"), True)
+
+def test_is_anagram_false():
+    eq_(anagrams.is_anagram("a", "b"), False)
+
+def test_is_anagram_false_different_capitalization():
+    eq_(anagrams.is_anagram("A", "a"), False)
+
+def test_is_anagram_multiple_letter_the_same():
+    eq_(anagrams.is_anagram("aa", "aaa"), False)
